@@ -22,6 +22,21 @@
 
 ### 修复
 
+- ⚠️⚠️ **声明 inject（关键修复）**：原先本插件**没有声明 `inject`**。冷启动时 loader 会在
+  `fs` / `webServer` / `systemPrompt` / `tools` 就绪**之前**就调用 `apply`，`ctx.get()` 全返回
+  `undefined`，于是那些 `if (x !== undefined)` 的"防御性 guard"**把整件事静默跳过** ——
+  路由、工具、提示词段**一个都没注册**；而 **Client 半照常加载**，所以表现为
+  「设置页能打开、但报 `读不到站点列表：HTTP 404`」，极难定位。
+  现在 `inject = ['fs', 'webServer', 'systemPrompt', 'tools']`（具名与 default 导出都带），
+  cordis 会等到服务可用才调用 `apply`。取舍是"缺任一服务的 profile 里本插件整体不激活" ——
+  **故意的**：宁可整体不激活（可见），也不要加载了却什么都没注册（不可见）。
+  同时 `apply` 开头加了"已声明却缺失"的告警（要响不要静默）。
+  离线 harness 新增断言：**代码里 `ctx.get` 用到的服务必须全部在 `inject` 里声明**
+  （负例已验证：把 `inject` 削减成 `['fs']` ⇒ harness exit 1）。
+
+  排查用的对照事实：同一份缓存模块，仅把 bundle 关掉再打开（让 `apply` 重跑一次）⇒
+  `/list` 立刻 200、`/health` 报 `services` 全 true、`toolsRegistered=2`、`toolsError=null`；
+  同一时刻同类插件 `/api/usage-stats` 返回 200 —— 说明插件路由本来就能访问，是我的**没注册**。
 - `site_experience_read` 遇到**形状合法但不存在的域名**时原本会抛出原始 fs 错误
   （模型传错一个域名就拿到一句 `cannot read "...": not found`，是最没用的一种失败）；
   改为返回**可读且有指导性**的提示：该平台还没有手册、库里现有手册在哪、
