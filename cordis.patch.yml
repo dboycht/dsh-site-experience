@@ -1,0 +1,6 @@
+# dsh-site-experience 的 bundle patch。
+# 插入一行即可：Host 半 = 本包的默认导出（lib/index.js）；
+# Client 半 = package.json 里 dsh.client 标记，由客户端模块表扫描进来。
+- insert:
+    - id: site-experience
+      name: dsh-site-experience

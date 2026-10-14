@@ -1,0 +1,14 @@
+# 本插件不带运行时产物目录：浏览器的快照/截图落盘在**消费方**（Chrome信息检索模式 preset）
+# 的 runtime/ 里，由那里的 --output-dir 决定。
+# 这里只排除包管理器产物与开发副本专属文档。
+
+node_modules/
+pnpm-lock.yaml
+
+# 开发副本专属文档（AGENTS.md 基本规则第 5 条：接续文档不同步到仓库）
+DEVELOPMENT.md
+ERROR.md
+
+# 杂项
+.cache/
+*.log
