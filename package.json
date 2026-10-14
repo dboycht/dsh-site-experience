@@ -1,13 +1,17 @@
 {
   "name": "dsh-site-experience",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "type": "module",
   "description": "站点经验库插件：把「检索前先看站点列表、再读对应平台经验」做成 DSH 插件能力，并在设置页里浏览。",
   "main": "lib/index.js",
   "exports": {
-    ".": { "default": "./lib/index.js" },
-    "./client": { "default": "./lib/client.js" },
+    ".": {
+      "default": "./lib/index.js"
+    },
+    "./client": {
+      "default": "./lib/client.js"
+    },
     "./package.json": "./package.json"
   },
   "dsh": {
